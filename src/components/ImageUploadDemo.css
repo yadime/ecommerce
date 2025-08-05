@@ -1,0 +1,271 @@
+.image-upload-demo {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.demo-header h1 {
+  font-size: 2.5rem;
+  color: #1f2937;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.demo-header p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.demo-content {
+  display: grid;
+  gap: 40px;
+}
+
+.upload-section,
+.preview-section {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.upload-section h2,
+.preview-section h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.preview-container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.preview-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.preview-info {
+  flex: 1;
+}
+
+.preview-info p {
+  margin: 8px 0;
+  color: #374151;
+  font-size: 14px;
+}
+
+.preview-info strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.no-preview {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.no-preview p {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.no-preview small {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.demo-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.upload-btn,
+.clear-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.upload-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.clear-btn {
+  background: white;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.clear-btn:hover:not(:disabled) {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.demo-features {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.demo-features h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.feature {
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.feature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.feature h3 {
+  font-size: 1.1rem;
+  color: #1f2937;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.feature p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .image-upload-demo {
+    padding: 20px 16px;
+  }
+
+  .demo-header h1 {
+    font-size: 2rem;
+  }
+
+  .upload-section,
+  .preview-section,
+  .demo-features {
+    padding: 24px 20px;
+  }
+
+  .preview-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .preview-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .demo-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .upload-btn,
+  .clear-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .demo-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .upload-section,
+  .preview-section,
+  .demo-features {
+    padding: 20px 16px;
+  }
+
+  .preview-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+  }
+}

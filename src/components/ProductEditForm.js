@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ImageUpload from './ImageUpload';
+import imageUploadService from '../services/imageUploadService';
 import './ProductEditForm.css';
 
 const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) => {
@@ -14,6 +16,11 @@ const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) =>
     inStock: true,
     discount: ''
   });
+  
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     if (product && !isAdding) {
@@ -29,6 +36,7 @@ const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) =>
         inStock: product.inStock !== undefined ? product.inStock : true,
         discount: product.discount || ''
       });
+      setImagePreview(product.image || '');
     }
   }, [product, isAdding]);
 
@@ -40,11 +48,94 @@ const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) =>
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleImageSelect = async (file) => {
+    try {
+      // Validate image dimensions
+      const dimensionValidation = await imageUploadService.validateImageDimensions(file);
+      if (!dimensionValidation.valid) {
+        alert(dimensionValidation.message);
+        return;
+      }
+
+      // Compress image if needed
+      const compressedFile = await imageUploadService.compressImage(file);
+      
+      setImageFile(compressedFile);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(compressedFile);
+      
+      // Clear the URL input when file is uploaded
+      setFormData(prev => ({ ...prev, image: '' }));
+    } catch (error) {
+      alert('Error processing image: ' + error.message);
+    }
+  };
+
+  const handleImageUrlChange = (url) => {
+    setFormData(prev => ({ ...prev, image: url }));
+    setImagePreview(url);
+    setImageFile(null);
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setFormData(prev => ({ ...prev, image: '' }));
+  };
+
+  const uploadImageToServer = async (file) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+    
+    try {
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      const result = await imageUploadService.uploadImage(file);
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      return result.url;
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    let finalImageUrl = formData.image;
+    
+    // If there's a file to upload, upload it first
+    if (imageFile) {
+      try {
+        finalImageUrl = await uploadImageToServer(imageFile);
+      } catch (error) {
+        alert('Failed to upload image: ' + error.message);
+        return;
+      }
+    }
     
     const productData = {
       ...formData,
+      image: finalImageUrl,
       price: parseFloat(formData.price),
       originalPrice: parseFloat(formData.originalPrice),
       rating: parseFloat(formData.rating),
@@ -197,20 +288,46 @@ const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) =>
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="image">Image URL *</label>
-            <input
-              type="url"
-              id="image"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              required
-              placeholder="https://example.com/image.jpg"
+          <div className="form-group image-upload-section">
+            <label>Product Image *</label>
+            
+            <ImageUpload
+              onImageSelect={handleImageSelect}
+              onImageUrlChange={handleImageUrlChange}
+              currentImage={imagePreview}
+              isUploading={isUploading}
             />
-            {formData.image && (
-              <div className="image-preview">
-                <img src={formData.image} alt="Preview" />
+
+            {imagePreview && (
+              <div className="image-preview-container">
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Product preview" />
+                  <button 
+                    type="button" 
+                    className="remove-image-btn"
+                    onClick={removeImage}
+                  >
+                    ×
+                  </button>
+                </div>
+                {imageFile && (
+                  <div className="image-info">
+                    <small>File: {imageFile.name}</small>
+                    <small>Size: {(imageFile.size / 1024 / 1024).toFixed(2)}MB</small>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="upload-progress">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <small>Uploading image... {uploadProgress}%</small>
               </div>
             )}
           </div>
@@ -232,8 +349,8 @@ const ProductEditForm = ({ product, isAdding, onSave, onCancel, categories }) =>
             <button type="button" className="cancel-btn" onClick={onCancel}>
               Cancel
             </button>
-            <button type="submit" className="save-btn">
-              {isAdding ? 'Add Product' : 'Save Changes'}
+            <button type="submit" className="save-btn" disabled={isUploading}>
+              {isUploading ? 'Uploading...' : (isAdding ? 'Add Product' : 'Save Changes')}
             </button>
           </div>
         </form>
